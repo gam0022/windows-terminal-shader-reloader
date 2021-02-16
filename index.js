@@ -10,6 +10,8 @@ const toWinPath = (str) => execSync("wslpath -w " + str).toString().trim();
 const settingsJson = '/mnt/c/Users/gam0022/AppData/Local/Packages/Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe/LocalState/settings.json';
 const shaderPath = '/mnt/c/Users/gam0022/Dropbox/windows-terminal/terminal/samples/PixelShaders/Raymarching.hlsl';
 const shaderPathCopy = path.join(path.dirname(shaderPath), "_Copy.hlsl");
+
+fs.copyFileSync(shaderPath, shaderPathCopy);
 const shaderPathWin = toWinPath(shaderPath);
 const shaderPathCopyWin = toWinPath(shaderPathCopy);
 
