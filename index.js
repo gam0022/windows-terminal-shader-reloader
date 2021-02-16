@@ -5,37 +5,37 @@ const Hjson = require('hjson');
 const { execSync } = require('child_process')
 const process = require('process');
 
-const toWinPath = (str) => execSync("wslpath -w " + str).toString().trim();
-
+// NOTE: 変更してください
 const settingsJson = '/mnt/c/Users/gam0022/AppData/Local/Packages/Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe/LocalState/settings.json';
-const shaderPath = '/mnt/c/Users/gam0022/Dropbox/windows-terminal/terminal/samples/PixelShaders/Raymarching.hlsl';
-const shaderPathCopy = path.join(path.dirname(shaderPath), "_Copy.hlsl");
+const targetHlsl = '/mnt/c/Users/gam0022/Dropbox/windows-terminal/terminal/samples/PixelShaders/Raymarching.hlsl';
 
-fs.copyFileSync(shaderPath, shaderPathCopy);
-const shaderPathWin = toWinPath(shaderPath);
-const shaderPathCopyWin = toWinPath(shaderPathCopy);
+// settings.json を更新するために一時ファイルを作成して切り替えます
+const tmpHlsl = path.join(path.dirname(targetHlsl), "_Raymarching.hlsl");
 
-console.log("shaderPathCopy: " + shaderPathCopy);
-console.log("shaderPathWin: " + shaderPathWin);
+fs.copyFileSync(targetHlsl, tmpHlsl);
+const toWinPath = (str) => execSync("wslpath -w " + str).toString().trim();
+const targetHlslWin = toWinPath(targetHlsl);
+const tmpHlslWin = toWinPath(tmpHlsl);
 
-let toggle = true;
-
-// One-liner for current directory
-const watcher = chokidar.watch(path.dirname(shaderPath), { ignored: /[\/\\]\./, persistent: true });
+let tmpToggle = true;
+const watcher = chokidar.watch(path.dirname(targetHlsl), { ignored: /[\/\\]\./, persistent: true });
 
 watcher.on('change', (path, status) => {
   console.log("change: " + path);
-  if (path == shaderPath) {
+
+  if (path == targetHlsl) {
     const jsonObject = Hjson.parse(fs.readFileSync(settingsJson, 'utf8'));
-    fs.copyFileSync(shaderPath, shaderPathCopy);
-    jsonObject.profiles['defaults']['experimental.pixelShaderPath'] = toggle ? shaderPathWin : shaderPathCopyWin;
+    fs.copyFileSync(targetHlsl, tmpHlsl);
+    jsonObject.profiles['defaults']['experimental.pixelShaderPath'] = tmpToggle ? tmpHlslWin : targetHlslWin;
     fs.writeFileSync(settingsJson, Hjson.stringify(jsonObject, { quotes: 'all', separator: true }));
-    toggle = !toggle;
+    tmpToggle = !tmpToggle;
   }
 });
 
 process.on('SIGINT', () => {
   console.log('Received SIGINT.');
-  fs.unlinkSync(shaderPathCopy);
+  jsonObject.profiles['defaults']['experimental.pixelShaderPath'] = targetHlslWin;
+  fs.writeFileSync(settingsJson, Hjson.stringify(jsonObject, { quotes: 'all', separator: true }));
+  fs.unlinkSync(tmpHlsl);
   process.exit();
 });
