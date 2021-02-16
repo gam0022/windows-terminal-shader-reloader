@@ -17,13 +17,12 @@ console.log("shaderPathWin: " + shaderPathWin);
 let toggle = true;
 
 // One-liner for current directory
-chokidar.watch(shaderPath).on('change', (event, path) => {
+chokidar.watch(shaderPath).on('change', (event, status) => {
+  console.log("change: " + event);
+  
   const jsonObject = Hjson.parse(fs.readFileSync(settingsJson, 'utf8'));
-  fs.copyFile(shaderPath, shaderPathCopy, err => {
-    console.log("err: " + err);
-    console.log("toggle: " + toggle);
-    jsonObject.profiles['defaults']['experimental.pixelShaderPath'] = toggle ? shaderPathWin : shaderPathCopyWin;
-    toggle = !toggle;
-    fs.writeFileSync(settingsJson, Hjson.stringify(jsonObject, { quotes: 'all', separator: true }));
-  });
+  fs.copyFileSync(shaderPath, shaderPathCopy);
+  jsonObject.profiles['defaults']['experimental.pixelShaderPath'] = toggle ? shaderPathWin : shaderPathCopyWin;
+  fs.writeFileSync(settingsJson, Hjson.stringify(jsonObject, { quotes: 'all', separator: true }));
+  toggle = !toggle;
 });
