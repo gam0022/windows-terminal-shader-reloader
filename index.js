@@ -5,7 +5,7 @@ const Hjson = require('hjson');
 const { execSync } = require('child_process')
 const process = require('process');
 
-// NOTE: 変更してください
+// NOTE: ご自身の環境に応じて修正してください
 const settingsJson = '/mnt/c/Users/gam0022/AppData/Local/Packages/Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe/LocalState/settings.json';
 const targetHlsl = '/mnt/c/Users/gam0022/Dropbox/windows-terminal/terminal/samples/PixelShaders/Raymarching.hlsl';
 
