@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "chokidar": "^3.5.1",
-    "hjson": "^3.2.2"
+    "hjson": "^3.2.2",
+    "wsl-path": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^14.14.28"
